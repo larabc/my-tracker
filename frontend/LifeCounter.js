@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import SaveMatchModal from './SaveMatchModal';
 
 const STARTING_LIFE = 20;
 const QUICK_CHANGES = [-5, -1, 1, 5];
@@ -80,13 +81,28 @@ export default function LifeCounter() {
   const [manaVisible, setManaVisible] = useState(false);
   const [diceVisible, setDiceVisible] = useState(false);
   const [diceResult, setDiceResult] = useState(null);
+  const [rounds, setRounds] = useState({ player1: 0, player2: 0 });
+  const [saveVisible, setSaveVisible] = useState(false);
 
-  const reset = () => {
+  const matchComplete = rounds.player1 === 2 || rounds.player2 === 2;
+  const matchResult = `${rounds.player1}-${rounds.player2}`;
+
+  const resetTable = () => {
     setLife1(STARTING_LIFE);
     setLife2(STARTING_LIFE);
     setMana1(EMPTY_MANA);
     setMana2(EMPTY_MANA);
     setDiceResult(null);
+  };
+
+  const reset = () => {
+    resetTable();
+    setRounds({ player1: 0, player2: 0 });
+  };
+
+  const winRound = (player) => {
+    setRounds((prev) => ({ ...prev, [player]: prev[player] + 1 }));
+    resetTable();
   };
 
   const rollDice = (option) => {
@@ -107,6 +123,45 @@ export default function LifeCounter() {
         onManaChange={changeMana(setMana2)}
         manaVisible={manaVisible}
         flipped
+      />
+
+      <View style={styles.matchBar}>
+        {!matchComplete && (
+          <>
+            <Text style={styles.matchText}>
+              Round {rounds.player1 + rounds.player2 + 1} — You {rounds.player1} : {rounds.player2} Opponent
+            </Text>
+            <View style={styles.matchButtonsRow}>
+              <TouchableOpacity style={styles.middleButton} onPress={() => winRound('player1')}>
+                <Text style={styles.middleButtonText}>You won round</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.middleButton} onPress={() => winRound('player2')}>
+                <Text style={styles.middleButtonText}>Opponent won round</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
+
+        {matchComplete && (
+          <>
+            <Text style={styles.matchText}>
+              Match finished: You {rounds.player1} : {rounds.player2} Opponent
+            </Text>
+            <TouchableOpacity style={styles.middleButton} onPress={() => setSaveVisible(true)}>
+              <Text style={styles.middleButtonText}>Save Match</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
+
+      <SaveMatchModal
+        visible={saveVisible}
+        result={matchResult}
+        onClose={() => setSaveVisible(false)}
+        onSaved={() => {
+          setSaveVisible(false);
+          reset();
+        }}
       />
 
       <View style={styles.middleBar}>
@@ -245,6 +300,19 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 16,
     paddingHorizontal: 8,
+  },
+  matchBar: {
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderColor: '#222',
+  },
+  matchText: {
+    color: '#fff',
+    marginBottom: 8,
+  },
+  matchButtonsRow: {
+    flexDirection: 'row',
   },
   middleBar: {
     flexDirection: 'row',
