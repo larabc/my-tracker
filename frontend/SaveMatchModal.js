@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { createMatch, getDecks, getEventTypes } from './api';
 
 const MODE_OPTIONS = [
@@ -37,6 +38,8 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
   const [playDraw, setPlayDraw] = useState('PLAY');
   const [mulligan, setMulligan] = useState(false);
   const [mulliganTo, setMulliganTo] = useState(null);
+  const [playedAt, setPlayedAt] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -45,6 +48,13 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
       getEventTypes().then(setEventTypes);
     }
   }, [visible]);
+
+  const onChangeDate = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setPlayedAt(selectedDate);
+    }
+  };
 
   const save = async () => {
     if (!deckId || !eventTypeId) {
@@ -67,7 +77,9 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
         result,
         mulligan,
         mulligan_to: mulligan ? mulliganTo : null,
+        played_at: playedAt.toISOString(),
       });
+      setPlayedAt(new Date());
       onSaved();
     } catch (error) {
       Alert.alert('Could not save', String(error.message));
@@ -143,6 +155,14 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
                 />
               ))}
             </View>
+
+            <Text style={styles.label}>Date</Text>
+            <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
+              <Text style={styles.choiceText}>{playedAt.toLocaleDateString()}</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker value={playedAt} mode="date" display="default" onChange={onChangeDate} />
+            )}
 
             <Text style={styles.label}>Mulligan?</Text>
             <View style={styles.row}>
@@ -223,6 +243,14 @@ const styles = StyleSheet.create({
   },
   choiceText: {
     color: '#fff',
+  },
+  dateButton: {
+    borderWidth: 1,
+    borderColor: '#555',
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    alignSelf: 'flex-start',
   },
   actions: {
     flexDirection: 'row',
