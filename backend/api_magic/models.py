@@ -71,6 +71,9 @@ class Match(models.Model):
         THREE_OR_FEWER = '3-', '3 o menos'
 
     deck = models.ForeignKey(Deck, on_delete=models.PROTECT, related_name='matches')
+    opponent_deck = models.ForeignKey(
+        Deck, on_delete=models.SET_NULL, null=True, blank=True, related_name='opponent_matches'
+    )
     mode = models.CharField(max_length=9, choices=Mode.choices)
     event_type = models.ForeignKey(EventType, on_delete=models.PROTECT, related_name='matches')
     play_draw = models.CharField(max_length=4, choices=PlayDraw.choices)

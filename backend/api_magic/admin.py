@@ -24,6 +24,7 @@ class TagAdmin(admin.ModelAdmin):
 class MatchAdmin(admin.ModelAdmin):
     list_display = (
         "deck",
+        "opponent_deck",
         "mode",
         "event_type",
         "result",
@@ -32,4 +33,4 @@ class MatchAdmin(admin.ModelAdmin):
         "played_at",
     )
     list_filter = ("mode", "event_type", "result", "mulligan")
-    autocomplete_fields = ("deck",)
+    autocomplete_fields = ("deck", "opponent_deck")

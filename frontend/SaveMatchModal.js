@@ -31,6 +31,7 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
   const [decks, setDecks] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
   const [deckId, setDeckId] = useState(null);
+  const [opponentDeckId, setOpponentDeckId] = useState(null);
   const [eventTypeId, setEventTypeId] = useState(null);
   const [mode, setMode] = useState('IN_PERSON');
   const [playDraw, setPlayDraw] = useState('PLAY');
@@ -59,6 +60,7 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
     try {
       await createMatch({
         deck: deckId,
+        opponent_deck: opponentDeckId,
         event_type: eventTypeId,
         mode,
         play_draw: playDraw,
@@ -89,6 +91,19 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
                   label={deck.name}
                   selected={deckId === deck.id}
                   onPress={() => setDeckId(deck.id)}
+                />
+              ))}
+            </View>
+
+            <Text style={styles.label}>Opponent's deck (optional)</Text>
+            <View style={styles.row}>
+              <Choice label="Unknown" selected={opponentDeckId === null} onPress={() => setOpponentDeckId(null)} />
+              {decks.map((deck) => (
+                <Choice
+                  key={deck.id}
+                  label={deck.name}
+                  selected={opponentDeckId === deck.id}
+                  onPress={() => setOpponentDeckId(deck.id)}
                 />
               ))}
             </View>

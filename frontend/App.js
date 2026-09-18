@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
 import { getDeckStats } from './api';
+import Decks from './Decks';
 import LifeCounter from './LifeCounter';
 
 function DeckStats() {
@@ -24,14 +25,22 @@ function DeckStats() {
   );
 }
 
+const SCREENS = {
+  match: LifeCounter,
+  decks: Decks,
+  stats: DeckStats,
+};
+
 export default function App() {
   const [screen, setScreen] = useState('match');
+  const Screen = SCREENS[screen];
 
   return (
     <View style={styles.container}>
-      {screen === 'match' ? <LifeCounter /> : <DeckStats />}
+      <Screen />
       <View style={styles.tabs}>
         <Button title="Live Match" onPress={() => setScreen('match')} />
+        <Button title="Decks" onPress={() => setScreen('decks')} />
         <Button title="Stats" onPress={() => setScreen('stats')} />
       </View>
     </View>
