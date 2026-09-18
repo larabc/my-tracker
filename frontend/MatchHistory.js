@@ -139,9 +139,9 @@ const styles = StyleSheet.create({
   choice: {
     borderWidth: 1,
     borderColor: '#999',
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     marginRight: 8,
     marginBottom: 8,
   },
@@ -151,9 +151,10 @@ const styles = StyleSheet.create({
   },
   choiceText: {
     color: '#000',
+    fontSize: 16,
   },
   matchRow: {
-    paddingVertical: 10,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
@@ -163,15 +164,18 @@ const styles = StyleSheet.create({
   },
   matchTitle: {
     fontWeight: 'bold',
+    fontSize: 16,
     flexShrink: 1,
     marginRight: 8,
   },
   result: {
     fontWeight: 'bold',
+    fontSize: 16,
   },
   matchMeta: {
     color: '#666',
-    marginTop: 2,
+    marginTop: 4,
+    fontSize: 14,
   },
   empty: {
     color: '#999',

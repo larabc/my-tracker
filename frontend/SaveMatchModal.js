@@ -232,9 +232,9 @@ const styles = StyleSheet.create({
   choice: {
     borderWidth: 1,
     borderColor: '#555',
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     marginRight: 8,
     marginBottom: 8,
   },
@@ -243,13 +243,14 @@ const styles = StyleSheet.create({
   },
   choiceText: {
     color: '#fff',
+    fontSize: 16,
   },
   dateButton: {
     borderWidth: 1,
     borderColor: '#555',
-    borderRadius: 6,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
     alignSelf: 'flex-start',
   },
   actions: {
@@ -258,16 +259,17 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   cancelButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
   },
   saveButton: {
     backgroundColor: '#3a7',
-    borderRadius: 6,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
   },
   actionText: {
     color: '#fff',
+    fontSize: 16,
   },
 });

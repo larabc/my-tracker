@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   name: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 12,
   },
   controls: {
@@ -214,9 +214,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     borderWidth: 1,
     borderColor: '#555',
     alignItems: 'center',
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 24,
+    fontSize: 32,
   },
   quickRow: {
     flexDirection: 'row',
@@ -232,9 +232,9 @@ const styles = StyleSheet.create({
   },
   quickButton: {
     borderWidth: 1,
-    borderRadius: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     marginHorizontal: 4,
   },
   quickButtonUp: {
@@ -245,9 +245,11 @@ const styles = StyleSheet.create({
   },
   quickButtonTextUp: {
     color: '#3a7',
+    fontSize: 16,
   },
   quickButtonTextDown: {
     color: '#a33',
+    fontSize: 16,
   },
   manaRow: {
     flexDirection: 'row',
@@ -258,26 +260,28 @@ const styles = StyleSheet.create({
     marginHorizontal: 6,
   },
   manaCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 4,
+    marginVertical: 6,
   },
   manaCircleText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   manaCount: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 14,
     marginBottom: 4,
   },
   manaArrow: {
     color: '#888',
-    fontSize: 16,
-    paddingHorizontal: 8,
+    fontSize: 22,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
   matchBar: {
     alignItems: 'center',
@@ -287,6 +291,7 @@ const styles = StyleSheet.create({
   },
   matchText: {
     color: '#fff',
+    fontSize: 15,
     marginBottom: 8,
   },
   matchButtonsRow: {
@@ -301,11 +306,11 @@ const styles = StyleSheet.create({
     borderColor: '#222',
   },
   middleButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 22,
     borderWidth: 1,
     borderColor: '#555',
-    borderRadius: 6,
+    borderRadius: 8,
     marginHorizontal: 8,
   },
   middleButtonActive: {
@@ -313,6 +318,7 @@ const styles = StyleSheet.create({
   },
   middleButtonText: {
     color: '#aaa',
+    fontSize: 16,
   },
   diceRow: {
     flexDirection: 'row',

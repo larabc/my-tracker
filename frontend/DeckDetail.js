@@ -79,7 +79,9 @@ const styles = StyleSheet.create({
   },
   back: {
     color: '#3a7',
-    marginBottom: 12,
+    fontSize: 16,
+    paddingVertical: 8,
+    marginBottom: 8,
   },
   title: {
     fontSize: 20,
@@ -102,16 +104,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   row: {
-    paddingVertical: 10,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
   rowTitle: {
     fontWeight: 'bold',
+    fontSize: 16,
   },
   rowMeta: {
     color: '#666',
-    marginTop: 2,
+    marginTop: 4,
+    fontSize: 14,
   },
   historyHeader: {
     flexDirection: 'row',
@@ -119,6 +123,7 @@ const styles = StyleSheet.create({
   },
   result: {
     fontWeight: 'bold',
+    fontSize: 16,
   },
   empty: {
     color: '#999',

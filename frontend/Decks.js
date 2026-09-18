@@ -192,17 +192,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   deckRow: {
-    paddingVertical: 12,
+    paddingVertical: 18,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
   deckName: {
     fontWeight: 'bold',
+    fontSize: 17,
   },
   deckMeta: {
     color: '#666',
-    marginTop: 2,
+    marginTop: 4,
+    fontSize: 14,
   },
   empty: {
     textAlign: 'center',
@@ -211,12 +213,13 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: '#3a7',
-    paddingVertical: 14,
+    paddingVertical: 18,
     alignItems: 'center',
   },
   addButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 17,
   },
   overlay: {
     flex: 1,
@@ -244,14 +247,15 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#222',
     color: '#fff',
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    fontSize: 16,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     borderWidth: 1,
     borderColor: '#444',
   },
   multiline: {
-    minHeight: 60,
+    minHeight: 70,
     textAlignVertical: 'top',
   },
   row: {
@@ -261,9 +265,9 @@ const styles = StyleSheet.create({
   choice: {
     borderWidth: 1,
     borderColor: '#555',
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     marginRight: 8,
     marginBottom: 8,
   },
@@ -272,6 +276,7 @@ const styles = StyleSheet.create({
   },
   choiceText: {
     color: '#fff',
+    fontSize: 16,
   },
   actions: {
     flexDirection: 'row',
@@ -279,16 +284,17 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   cancelButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
   },
   saveButton: {
     backgroundColor: '#3a7',
-    borderRadius: 6,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
   },
   actionText: {
     color: '#fff',
+    fontSize: 16,
   },
 });
