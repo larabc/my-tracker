@@ -79,8 +79,6 @@ export default function LifeCounter() {
   const [mana1, setMana1] = useState(EMPTY_MANA);
   const [mana2, setMana2] = useState(EMPTY_MANA);
   const [manaVisible, setManaVisible] = useState(false);
-  const [diceVisible, setDiceVisible] = useState(false);
-  const [diceResult, setDiceResult] = useState(null);
   const [rounds, setRounds] = useState({ player1: 0, player2: 0 });
   const [saveVisible, setSaveVisible] = useState(false);
 
@@ -92,7 +90,6 @@ export default function LifeCounter() {
     setLife2(STARTING_LIFE);
     setMana1(EMPTY_MANA);
     setMana2(EMPTY_MANA);
-    setDiceResult(null);
   };
 
   const reset = () => {
@@ -105,9 +102,6 @@ export default function LifeCounter() {
     resetTable();
   };
 
-  const rollDice = (option) => {
-    setDiceResult(`${option.label}: ${option.roll()}`);
-  };
 
   const changeMana = (setMana) => (color, delta) => {
     setMana((prev) => ({ ...prev, [color]: Math.max(0, prev[color] + delta) }));
@@ -174,24 +168,8 @@ export default function LifeCounter() {
         >
           <Text style={styles.middleButtonText}>Mana</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.middleButton, diceVisible && styles.middleButtonActive]}
-          onPress={() => setDiceVisible((visible) => !visible)}
-        >
-          <Text style={styles.middleButtonText}>Dice</Text>
-        </TouchableOpacity>
       </View>
 
-      {diceVisible && (
-        <View style={styles.diceRow}>
-          {DICE_OPTIONS.map((option) => (
-            <TouchableOpacity key={option.key} style={styles.diceButton} onPress={() => rollDice(option)}>
-              <Text style={styles.diceButtonText}>{option.label}</Text>
-            </TouchableOpacity>
-          ))}
-          {diceResult && <Text style={styles.diceResult}>{diceResult}</Text>}
-        </View>
-      )}
 
       <PlayerLife
         name="Player 1"
