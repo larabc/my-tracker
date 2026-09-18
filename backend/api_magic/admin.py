@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Deck, EventType, Match, Tag
+from .models import Deck, EventType, Match, Round, Tag
 
 
 @admin.register(Deck)
@@ -20,6 +20,11 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ("name",)
 
 
+class RoundInline(admin.TabularInline):
+    model = Round
+    extra = 0
+
+
 @admin.register(Match)
 class MatchAdmin(admin.ModelAdmin):
     list_display = (
@@ -29,8 +34,8 @@ class MatchAdmin(admin.ModelAdmin):
         "event_type",
         "result",
         "play_draw",
-        "mulligan",
         "played_at",
     )
-    list_filter = ("mode", "event_type", "result", "mulligan")
+    list_filter = ("mode", "event_type", "result")
     autocomplete_fields = ("deck", "opponent_deck")
+    inlines = [RoundInline]

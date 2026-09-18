@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getDecks, getEventTypes, getMatches } from './api';
-import { outcome } from './matchUtils';
+import { mulliganSummary, outcome } from './matchUtils';
 
 const RESULT_OPTIONS = [
   { value: 'WIN', label: 'Win' },
@@ -106,8 +106,8 @@ export default function MatchHistory() {
           </View>
           <Text style={styles.matchMeta}>
             {eventTypeName(match.event_type)} · {match.play_draw === 'PLAY' ? 'On the play' : 'On the draw'}
-            {match.mulligan ? ` · Mulligan to ${match.mulligan_to}` : ''}
           </Text>
+          {mulliganSummary(match) && <Text style={styles.matchMeta}>{mulliganSummary(match)}</Text>}
           <Text style={styles.matchMeta}>{new Date(match.played_at).toLocaleDateString()}</Text>
         </View>
       ))}

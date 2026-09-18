@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Deck, EventType, Match, Tag
+from .models import Deck, EventType, Match, Round, Tag
 
 
 class DeckSerializer(serializers.ModelSerializer):
@@ -21,10 +21,10 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MatchSerializer(serializers.ModelSerializer):
+class RoundSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Match
-        fields = '__all__'
+        model = Round
+        fields = ['id', 'round_number', 'winner', 'mulligan', 'mulligan_to']
 
     def validate(self, data):
         mulligan = data.get('mulligan', getattr(self.instance, 'mulligan', False))
@@ -39,6 +39,21 @@ class MatchSerializer(serializers.ModelSerializer):
                 {'mulligan_to': 'Must be empty when mulligan is false.'}
             )
         return data
+
+
+class MatchSerializer(serializers.ModelSerializer):
+    rounds = RoundSerializer(many=True)
+
+    class Meta:
+        model = Match
+        fields = '__all__'
+
+    def create(self, validated_data):
+        rounds_data = validated_data.pop('rounds')
+        match = Match.objects.create(**validated_data)
+        for round_data in rounds_data:
+            Round.objects.create(match=match, **round_data)
+        return match
 
 
 class DeckStatsSerializer(serializers.Serializer):

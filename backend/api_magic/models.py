@@ -78,8 +78,6 @@ class Match(models.Model):
     event_type = models.ForeignKey(EventType, on_delete=models.PROTECT, related_name='matches')
     play_draw = models.CharField(max_length=4, choices=PlayDraw.choices)
     result = models.CharField(max_length=3, choices=Result.choices)
-    mulligan = models.BooleanField(default=False)
-    mulligan_to = models.CharField(max_length=2, choices=MulliganTo.choices, blank=True, null=True)
     played_at = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(Tag, blank=True, related_name='matches')
 
@@ -96,3 +94,21 @@ class Match(models.Model):
         if wins < losses:
             return 'LOSS'
         return 'DRAW'
+
+
+class Round(models.Model):
+    class Winner(models.TextChoices):
+        ME = 'ME', 'Me'
+        OPPONENT = 'OPPONENT', 'Opponent'
+
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name='rounds')
+    round_number = models.PositiveSmallIntegerField()
+    winner = models.CharField(max_length=8, choices=Winner.choices)
+    mulligan = models.BooleanField(default=False)
+    mulligan_to = models.CharField(max_length=2, choices=Match.MulliganTo.choices, blank=True, null=True)
+
+    class Meta:
+        ordering = ['round_number']
+
+    def __str__(self):
+        return f'{self.match} - Round {self.round_number} ({self.winner})'

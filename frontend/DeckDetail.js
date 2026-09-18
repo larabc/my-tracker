@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getEventTypes, getMatches } from './api';
-import { getRecord } from './matchUtils';
+import { getRecord, mulliganSummary } from './matchUtils';
 
 export default function DeckDetail({ deck, decks, onBack }) {
   const [matches, setMatches] = useState([]);
@@ -63,8 +63,8 @@ export default function DeckDetail({ deck, decks, onBack }) {
           </View>
           <Text style={styles.rowMeta}>
             {eventTypeName(match.event_type)} · {match.play_draw === 'PLAY' ? 'On the play' : 'On the draw'}
-            {match.mulligan ? ` · Mulligan to ${match.mulligan_to}` : ''}
           </Text>
+          {mulliganSummary(match) && <Text style={styles.rowMeta}>{mulliganSummary(match)}</Text>}
           <Text style={styles.rowMeta}>{new Date(match.played_at).toLocaleDateString()}</Text>
         </View>
       ))}

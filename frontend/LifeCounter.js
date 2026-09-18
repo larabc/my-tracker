@@ -3,13 +3,9 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import SaveMatchModal from './SaveMatchModal';
 
 const STARTING_LIFE = 20;
+const STARTING_HAND = 7;
 const QUICK_CHANGES = [-5, -1, 1, 5];
 const EMPTY_MANA = { C: 0, G: 0, R: 0, B: 0, U: 0, W: 0 };
-const DICE_OPTIONS = [
-  { key: 'd6', label: 'D6', roll: () => String(Math.floor(Math.random() * 6) + 1) },
-  { key: 'd20', label: 'D20', roll: () => String(Math.floor(Math.random() * 20) + 1) },
-  { key: 'coin', label: 'Coin', roll: () => (Math.random() < 0.5 ? 'Heads' : 'Tails') },
-];
 const MANA_COLORS = [
   { key: 'C', label: '◇', bg: '#3a3f4b' },
   { key: 'G', label: 'G', bg: '#2f6b3a' },
@@ -18,6 +14,13 @@ const MANA_COLORS = [
   { key: 'U', label: 'U', bg: '#245a8f' },
   { key: 'W', label: 'W', bg: '#e8e4d0', textColor: '#000' },
 ];
+
+function mulliganFields(keptCards) {
+  if (keptCards >= STARTING_HAND) {
+    return { mulligan: false, mulligan_to: null };
+  }
+  return { mulligan: true, mulligan_to: keptCards <= 3 ? '3-' : String(keptCards) };
+}
 
 function ManaPool({ mana, onChange }) {
   return (
@@ -29,10 +32,9 @@ function ManaPool({ mana, onChange }) {
           </TouchableOpacity>
           <View style={[styles.manaCircle, { backgroundColor: color.bg }]}>
             <Text style={[styles.manaCircleText, color.textColor && { color: color.textColor }]}>
-              {color.label}
+              {mana[color.key]}
             </Text>
           </View>
-          <Text style={styles.manaCount}>{mana[color.key]}</Text>
           <TouchableOpacity onPress={() => onChange(color.key, -1)}>
             <Text style={styles.manaArrow}>-</Text>
           </TouchableOpacity>
@@ -42,7 +44,40 @@ function ManaPool({ mana, onChange }) {
   );
 }
 
-function PlayerLife({ name, life, setLife, mana, onManaChange, manaVisible, flipped }) {
+function MulliganControl({ keptCards, onChange }) {
+  const [editing, setEditing] = useState(false);
+
+  if (!editing) {
+    return (
+      <TouchableOpacity style={styles.mulliganPill} onPress={() => setEditing(true)}>
+        <Text style={styles.mulliganPillText}>
+          {keptCards >= STARTING_HAND ? `Kept ${STARTING_HAND} — no mulligan` : `Mulliganed to ${keptCards}`}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+
+  return (
+    <View style={styles.mulliganEditRow}>
+      <Text style={styles.mulliganEditLabel}>Mulligan</Text>
+      <TouchableOpacity style={styles.mulliganStepButton} onPress={() => onChange(Math.max(0, keptCards - 1))}>
+        <Text style={styles.mulliganStepButtonText}>-</Text>
+      </TouchableOpacity>
+      <Text style={styles.mulliganCount}>{keptCards}</Text>
+      <TouchableOpacity
+        style={styles.mulliganStepButton}
+        onPress={() => onChange(Math.min(STARTING_HAND, keptCards + 1))}
+      >
+        <Text style={styles.mulliganStepButtonText}>+</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.mulliganSaveButton} onPress={() => setEditing(false)}>
+        <Text style={styles.mulliganSaveButtonText}>Save</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function PlayerLife({ name, life, setLife, mana, onManaChange, manaVisible, flipped, mulliganControl }) {
   return (
     <View style={[styles.player, flipped && styles.flipped]}>
       <Text style={styles.name}>{name}</Text>
@@ -55,6 +90,7 @@ function PlayerLife({ name, life, setLife, mana, onManaChange, manaVisible, flip
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
+      {mulliganControl}
       <View style={styles.quickRow}>
         {QUICK_CHANGES.map((amount) => (
           <TouchableOpacity
@@ -79,29 +115,38 @@ export default function LifeCounter() {
   const [mana1, setMana1] = useState(EMPTY_MANA);
   const [mana2, setMana2] = useState(EMPTY_MANA);
   const [manaVisible, setManaVisible] = useState(false);
-  const [rounds, setRounds] = useState({ player1: 0, player2: 0 });
+  const [rounds, setRounds] = useState([]);
+  const [keptCards, setKeptCards] = useState(STARTING_HAND);
   const [saveVisible, setSaveVisible] = useState(false);
 
-  const matchComplete = rounds.player1 === 2 || rounds.player2 === 2;
-  const matchResult = `${rounds.player1}-${rounds.player2}`;
+  const player1Wins = rounds.filter((round) => round.winner === 'ME').length;
+  const player2Wins = rounds.filter((round) => round.winner === 'OPPONENT').length;
+  const matchResult = `${player1Wins}-${player2Wins}`;
 
   const resetTable = () => {
     setLife1(STARTING_LIFE);
     setLife2(STARTING_LIFE);
     setMana1(EMPTY_MANA);
     setMana2(EMPTY_MANA);
+    setKeptCards(STARTING_HAND);
   };
 
   const reset = () => {
     resetTable();
-    setRounds({ player1: 0, player2: 0 });
+    setRounds([]);
   };
 
-  const winRound = (player) => {
-    setRounds((prev) => ({ ...prev, [player]: prev[player] + 1 }));
+  const recordRound = (winner) => {
+    setRounds((prev) => [
+      ...prev,
+      {
+        round_number: prev.length + 1,
+        winner,
+        ...mulliganFields(keptCards),
+      },
+    ]);
     resetTable();
   };
-
 
   const changeMana = (setMana) => (color, delta) => {
     setMana((prev) => ({ ...prev, [color]: Math.max(0, prev[color] + delta) }));
@@ -120,43 +165,18 @@ export default function LifeCounter() {
       />
 
       <View style={styles.matchBar}>
-        {!matchComplete && (
-          <>
-            <Text style={styles.matchText}>
-              Round {rounds.player1 + rounds.player2 + 1} — You {rounds.player1} : {rounds.player2} Opponent
-            </Text>
-            <View style={styles.matchButtonsRow}>
-              <TouchableOpacity style={styles.middleButton} onPress={() => winRound('player1')}>
-                <Text style={styles.middleButtonText}>You won round</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.middleButton} onPress={() => winRound('player2')}>
-                <Text style={styles.middleButtonText}>Opponent won round</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
-
-        {matchComplete && (
-          <>
-            <Text style={styles.matchText}>
-              Match finished: You {rounds.player1} : {rounds.player2} Opponent
-            </Text>
-            <TouchableOpacity style={styles.middleButton} onPress={() => setSaveVisible(true)}>
-              <Text style={styles.middleButtonText}>Save Match</Text>
-            </TouchableOpacity>
-          </>
-        )}
+        <Text style={styles.matchText}>
+          Round {rounds.length + 1} — You {player1Wins} : {player2Wins} Opponent
+        </Text>
+        <View style={styles.matchButtonsRow}>
+          <TouchableOpacity style={styles.middleButton} onPress={() => recordRound('ME')}>
+            <Text style={styles.middleButtonText}>You won round</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.middleButton} onPress={() => recordRound('OPPONENT')}>
+            <Text style={styles.middleButtonText}>Opponent won round</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <SaveMatchModal
-        visible={saveVisible}
-        result={matchResult}
-        onClose={() => setSaveVisible(false)}
-        onSaved={() => {
-          setSaveVisible(false);
-          reset();
-        }}
-      />
 
       <View style={styles.middleBar}>
         <TouchableOpacity style={styles.middleButton} onPress={reset}>
@@ -168,8 +188,21 @@ export default function LifeCounter() {
         >
           <Text style={styles.middleButtonText}>Mana</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.middleButton} onPress={() => setSaveVisible(true)}>
+          <Text style={styles.middleButtonText}>Finish Match</Text>
+        </TouchableOpacity>
       </View>
 
+      <SaveMatchModal
+        visible={saveVisible}
+        result={matchResult}
+        rounds={rounds}
+        onClose={() => setSaveVisible(false)}
+        onSaved={() => {
+          setSaveVisible(false);
+          reset();
+        }}
+      />
 
       <PlayerLife
         name="Player 1"
@@ -178,6 +211,7 @@ export default function LifeCounter() {
         mana={mana1}
         onManaChange={changeMana(setMana1)}
         manaVisible={manaVisible}
+        mulliganControl={<MulliganControl keptCards={keptCards} onChange={setKeptCards} />}
       />
     </View>
   );
@@ -226,6 +260,60 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 32,
   },
+  mulliganPill: {
+    marginTop: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#555',
+    borderRadius: 20,
+  },
+  mulliganPillText: {
+    color: '#aaa',
+    fontSize: 14,
+  },
+  mulliganEditRow: {
+    marginTop: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#555',
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  mulliganEditLabel: {
+    color: '#aaa',
+    fontSize: 14,
+    marginRight: 8,
+  },
+  mulliganStepButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  mulliganStepButtonText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  mulliganCount: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginHorizontal: 4,
+    minWidth: 20,
+    textAlign: 'center',
+  },
+  mulliganSaveButton: {
+    marginLeft: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: '#3a7',
+    borderRadius: 14,
+  },
+  mulliganSaveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   quickRow: {
     flexDirection: 'row',
     marginTop: 20,
@@ -272,11 +360,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-  manaCount: {
-    color: '#fff',
-    fontSize: 14,
-    marginBottom: 4,
-  },
   manaArrow: {
     color: '#888',
     fontSize: 22,
@@ -296,6 +379,8 @@ const styles = StyleSheet.create({
   },
   matchButtonsRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   middleBar: {
     flexDirection: 'row',
@@ -312,6 +397,7 @@ const styles = StyleSheet.create({
     borderColor: '#555',
     borderRadius: 8,
     marginHorizontal: 8,
+    marginBottom: 8,
   },
   middleButtonActive: {
     borderColor: '#3a7',
@@ -319,29 +405,5 @@ const styles = StyleSheet.create({
   middleButtonText: {
     color: '#aaa',
     fontSize: 16,
-  },
-  diceRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderColor: '#222',
-  },
-  diceButton: {
-    borderWidth: 1,
-    borderColor: '#555',
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    marginHorizontal: 4,
-  },
-  diceButtonText: {
-    color: '#ccc',
-  },
-  diceResult: {
-    color: '#fff',
-    marginLeft: 12,
-    fontSize: 14,
   },
 });

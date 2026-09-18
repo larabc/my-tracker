@@ -13,13 +13,6 @@ const PLAY_DRAW_OPTIONS = [
   { value: 'DRAW', label: 'On the draw' },
 ];
 
-const MULLIGAN_TO_OPTIONS = [
-  { value: '6', label: '6' },
-  { value: '5', label: '5' },
-  { value: '4', label: '4' },
-  { value: '3-', label: '3 or fewer' },
-];
-
 function Choice({ label, selected, onPress }) {
   return (
     <TouchableOpacity style={[styles.choice, selected && styles.choiceSelected]} onPress={onPress}>
@@ -28,7 +21,7 @@ function Choice({ label, selected, onPress }) {
   );
 }
 
-export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
+export default function SaveMatchModal({ visible, result, rounds, onClose, onSaved }) {
   const [decks, setDecks] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
   const [deckId, setDeckId] = useState(null);
@@ -36,8 +29,6 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
   const [eventTypeId, setEventTypeId] = useState(null);
   const [mode, setMode] = useState('IN_PERSON');
   const [playDraw, setPlayDraw] = useState('PLAY');
-  const [mulligan, setMulligan] = useState(false);
-  const [mulliganTo, setMulliganTo] = useState(null);
   const [playedAt, setPlayedAt] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -61,10 +52,6 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
       Alert.alert('Missing info', 'Pick a deck and an event type first.');
       return;
     }
-    if (mulligan && !mulliganTo) {
-      Alert.alert('Missing info', 'Pick how low the mulligan went.');
-      return;
-    }
 
     setSaving(true);
     try {
@@ -75,9 +62,8 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
         mode,
         play_draw: playDraw,
         result,
-        mulligan,
-        mulligan_to: mulligan ? mulliganTo : null,
         played_at: playedAt.toISOString(),
+        rounds,
       });
       setPlayedAt(new Date());
       onSaved();
@@ -162,28 +148,6 @@ export default function SaveMatchModal({ visible, result, onClose, onSaved }) {
             </TouchableOpacity>
             {showDatePicker && (
               <DateTimePicker value={playedAt} mode="date" display="default" onChange={onChangeDate} />
-            )}
-
-            <Text style={styles.label}>Mulligan?</Text>
-            <View style={styles.row}>
-              <Choice label="No" selected={!mulligan} onPress={() => { setMulligan(false); setMulliganTo(null); }} />
-              <Choice label="Yes" selected={mulligan} onPress={() => setMulligan(true)} />
-            </View>
-
-            {mulligan && (
-              <>
-                <Text style={styles.label}>Mulligan to</Text>
-                <View style={styles.row}>
-                  {MULLIGAN_TO_OPTIONS.map((option) => (
-                    <Choice
-                      key={option.value}
-                      label={option.label}
-                      selected={mulliganTo === option.value}
-                      onPress={() => setMulliganTo(option.value)}
-                    />
-                  ))}
-                </View>
-              </>
             )}
 
             <View style={styles.actions}>

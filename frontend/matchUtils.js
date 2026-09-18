@@ -5,6 +5,12 @@ export function outcome(match) {
   return 'DRAW';
 }
 
+export function mulliganSummary(match) {
+  const mulliganRounds = (match.rounds || []).filter((round) => round.mulligan);
+  if (mulliganRounds.length === 0) return null;
+  return `Mulligan: ${mulliganRounds.map((round) => `R${round.round_number}→${round.mulligan_to}`).join(', ')}`;
+}
+
 export function getRecord(matches) {
   return matches.reduce(
     (record, match) => {

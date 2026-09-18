@@ -2,12 +2,13 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Deck, EventType, Match, Tag
+from .models import Deck, EventType, Match, Round, Tag
 from .serializers import (
     DeckSerializer,
     DeckStatsSerializer,
     EventTypeSerializer,
     MatchSerializer,
+    RoundSerializer,
     TagSerializer,
 )
 
@@ -60,3 +61,8 @@ class TagViewSet(viewsets.ModelViewSet):
 class MatchViewSet(viewsets.ModelViewSet):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
+
+
+class RoundViewSet(viewsets.ModelViewSet):
+    queryset = Round.objects.all()
+    serializer_class = RoundSerializer
