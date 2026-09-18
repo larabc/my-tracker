@@ -1,34 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
-import { getDeckStats } from './api';
+import { useState } from 'react';
+import { Button, StyleSheet, View } from 'react-native';
 import Decks from './Decks';
 import LifeCounter from './LifeCounter';
-
-function DeckStats() {
-  const [decks, setDecks] = useState([]);
-
-  useEffect(() => {
-    getDeckStats().then(setDecks);
-  }, []);
-
-  return (
-    <FlatList
-      data={decks}
-      keyExtractor={(deck) => String(deck.deck_id)}
-      renderItem={({ item }) => (
-        <View style={styles.row}>
-          <Text style={styles.name}>{item.deck_name}</Text>
-          <Text>Win rate: {item.win_rate}%</Text>
-        </View>
-      )}
-    />
-  );
-}
+import MatchHistory from './MatchHistory';
 
 const SCREENS = {
   match: LifeCounter,
   decks: Decks,
-  stats: DeckStats,
+  history: MatchHistory,
 };
 
 export default function App() {
@@ -41,7 +20,7 @@ export default function App() {
       <View style={styles.tabs}>
         <Button title="Live Match" onPress={() => setScreen('match')} />
         <Button title="Decks" onPress={() => setScreen('decks')} />
-        <Button title="Stats" onPress={() => setScreen('stats')} />
+        <Button title="History" onPress={() => setScreen('history')} />
       </View>
     </View>
   );
@@ -57,14 +36,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingBottom: 10,
-  },
-  row: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  name: {
-    fontWeight: 'bold',
   },
 });
