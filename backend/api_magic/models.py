@@ -82,3 +82,14 @@ class Match(models.Model):
 
     def __str__(self):
         return f'{self.deck.name} - {self.result} ({self.played_at:%Y-%m-%d})'
+
+    def outcome(self):
+        """Returns 'WIN', 'LOSS', 'DRAW', or None if the match has no result yet (0-0)."""
+        if self.result == self.Result.R_0_0:
+            return None
+        wins, losses = (int(n) for n in self.result.split('-'))
+        if wins > losses:
+            return 'WIN'
+        if wins < losses:
+            return 'LOSS'
+        return 'DRAW'

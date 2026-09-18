@@ -39,3 +39,13 @@ class MatchSerializer(serializers.ModelSerializer):
                 {'mulligan_to': 'Must be empty when mulligan is false.'}
             )
         return data
+
+
+class DeckStatsSerializer(serializers.Serializer):
+    deck_id = serializers.IntegerField()
+    deck_name = serializers.CharField()
+    played = serializers.IntegerField()
+    won = serializers.IntegerField()
+    lost = serializers.IntegerField()
+    drawn = serializers.IntegerField()
+    win_rate = serializers.FloatField()
